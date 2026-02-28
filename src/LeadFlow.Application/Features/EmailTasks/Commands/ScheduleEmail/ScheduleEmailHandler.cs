@@ -13,7 +13,9 @@ public record ScheduleEmailCommand(
     Guid LeadId,
     Guid TemplateId,
     DateTime? ScheduledAt,
-    bool ApplySystemFollowups = true
+    bool ApplySystemFollowups = true,
+    string? OverrideSubject = null,
+    string? OverrideBody = null
 ) : IRequest<Result<Guid>>;
 
 public class ScheduleEmailValidator : AbstractValidator<ScheduleEmailCommand>
@@ -67,10 +69,12 @@ public class ScheduleEmailHandler(
                        ?? LeadFlow.Domain.Entities.SystemSettings.CreateDefault();
 
 
-        // 6. Render template
+        // 6. Render template or use overrides
         var vars = BuildVars(lead, smtpSettings);
-        var subject = Render(template.Subject, vars);
-        var body    = Render(template.Body, vars);
+        var subjectToRender = cmd.OverrideSubject ?? template.Subject;
+        var bodyToRender = cmd.OverrideBody ?? template.Body;
+        var subject = Render(subjectToRender, vars);
+        var body    = Render(bodyToRender, vars);
 
         // 7. Create task
         var task = EmailTask.Create(

@@ -14,6 +14,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<EmailFollowup> EmailFollowups => Set<EmailFollowup>();
     public DbSet<UserSmtpSettings> UserSmtpSettings => Set<UserSmtpSettings>();
     public DbSet<SystemSettings> SystemSettings => Set<SystemSettings>();
+    public DbSet<Opportunity> Opportunities => Set<Opportunity>();
+    public DbSet<OpportunityDocument> OpportunityDocuments => Set<OpportunityDocument>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

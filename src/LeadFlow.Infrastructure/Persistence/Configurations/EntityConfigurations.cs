@@ -147,3 +147,79 @@ public class SystemSettingsConfiguration : IEntityTypeConfiguration<SystemSettin
                     (System.Text.Json.JsonSerializerOptions?)null) ?? new());
     }
 }
+
+public class OpportunityConfiguration : IEntityTypeConfiguration<Opportunity>
+{
+    public void Configure(EntityTypeBuilder<Opportunity> b)
+    {
+        b.ToTable("opportunities");
+        b.HasKey(o => o.Id);
+        
+        b.Property(o => o.Id).HasColumnName("id");
+        b.Property(o => o.CreatedAt).HasColumnName("created_at");
+        b.Property(o => o.UpdatedAt).HasColumnName("updated_at");
+
+        b.Property(o => o.LeadId).HasColumnName("lead_id");
+        b.Property(o => o.CreatedByUserId).HasColumnName("created_by_user_id");
+        b.Property(o => o.OwnerUserId).HasColumnName("owner_user_id");
+        
+        b.Property(o => o.Title).IsRequired().HasMaxLength(200).HasColumnName("title");
+        b.Property(o => o.Description).HasMaxLength(2000).HasColumnName("description");
+        
+        b.Property(o => o.Type).HasConversion<string>().HasMaxLength(50).HasColumnName("type");
+        b.Property(o => o.Status).HasConversion<string>().HasMaxLength(50).HasColumnName("status");
+        b.Property(o => o.Priority).HasConversion<string>().HasMaxLength(50).HasColumnName("priority");
+        
+        b.Property(o => o.ExpectedValue).HasColumnType("numeric(18,2)").HasColumnName("expected_value");
+        b.Property(o => o.ExpectedStartDate).HasColumnName("expected_start_date");
+        b.Property(o => o.ExpectedEndDate).HasColumnName("expected_end_date");
+
+        b.HasIndex(o => o.LeadId);
+        b.HasIndex(o => o.OwnerUserId);
+        b.HasIndex(o => o.Status);
+
+        b.HasOne(o => o.Lead)
+            .WithMany()
+            .HasForeignKey(o => o.LeadId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        b.HasOne(o => o.CreatedByUser)
+            .WithMany()
+            .HasForeignKey(o => o.CreatedByUserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        b.HasOne(o => o.OwnerUser)
+            .WithMany()
+            .HasForeignKey(o => o.OwnerUserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        b.HasMany(o => o.Documents)
+            .WithOne(d => d.Opportunity)
+            .HasForeignKey(d => d.OpportunityId)
+            .OnDelete(DeleteBehavior.Cascade);
+    }
+}
+
+public class OpportunityDocumentConfiguration : IEntityTypeConfiguration<OpportunityDocument>
+{
+    public void Configure(EntityTypeBuilder<OpportunityDocument> b)
+    {
+        b.ToTable("opportunity_documents");
+        b.HasKey(d => d.Id);
+
+        b.Property(d => d.Id).HasColumnName("id");
+        b.Property(d => d.CreatedAt).HasColumnName("created_at");
+        b.Property(d => d.UpdatedAt).HasColumnName("updated_at");
+
+        b.Property(d => d.OpportunityId).HasColumnName("opportunity_id");
+        b.Property(d => d.FileName).IsRequired().HasMaxLength(255).HasColumnName("file_name");
+        b.Property(d => d.FileUrl).IsRequired().HasMaxLength(1000).HasColumnName("file_url");
+        b.Property(d => d.DocumentType).IsRequired().HasMaxLength(50).HasColumnName("document_type");
+        b.Property(d => d.UploadedByUserId).HasColumnName("uploaded_by_user_id");
+
+        b.HasOne(d => d.UploadedByUser)
+            .WithMany()
+            .HasForeignKey(d => d.UploadedByUserId)
+            .OnDelete(DeleteBehavior.Restrict);
+    }
+}

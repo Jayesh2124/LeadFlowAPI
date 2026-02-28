@@ -13,6 +13,8 @@ public interface IApplicationDbContext
     DbSet<EmailFollowup> EmailFollowups { get; }
     DbSet<UserSmtpSettings> UserSmtpSettings { get; }
     DbSet<SystemSettings> SystemSettings { get; }
+    DbSet<Opportunity> Opportunities { get; }
+    DbSet<OpportunityDocument> OpportunityDocuments { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

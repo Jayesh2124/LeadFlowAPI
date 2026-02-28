@@ -7,6 +7,7 @@ using LeadFlow.Infrastructure;
 using LeadFlow.Infrastructure.BackgroundJobs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.IdentityModel.Tokens;
 
 
@@ -72,9 +73,12 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddCors(opts =>
 {
     opts.AddPolicy("Frontend", policy =>
-        policy.WithOrigins(
-                builder.Configuration.GetSection("AllowedOrigins").Get<string[]>()
-                    ?? ["http://localhost:4200"])
+        //policy.WithOrigins(
+        //        builder.Configuration.GetSection("AllowedOrigins").Get<string[]>()
+        //            ?? ["http://localhost:57401"])
+        //      .AllowAnyHeader()
+        //      .AllowAnyMethod());
+        policy.AllowAnyOrigin()
               .AllowAnyHeader()
               .AllowAnyMethod());
 });
@@ -112,8 +116,7 @@ app.MapEmailTaskEndpoints();
 app.MapSmtpSettingsEndpoints();
 app.MapSystemSettingsEndpoints();
 app.MapBlobEndpoints();
-
-
+app.MapOpportunityEndpoints(); // NEW
 // ── Recurring Jobs ───────────────────────────────────────────
 RecurringJob.AddOrUpdate<RetryJobService>(
     "retry-pending-tasks",
@@ -159,3 +162,7 @@ static async Task SeedAsync(LeadFlow.Infrastructure.Persistence.AppDbContext db)
         Console.WriteLine("✅ Admin seeded: admin@leadflow.io / Admin@12345");
     }
 }
+
+
+// Migration commands
+//dotnet ef database update -p src\LeadFlow.Infrastructure -s src\LeadFlow.API

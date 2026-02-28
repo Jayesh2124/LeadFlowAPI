@@ -6,6 +6,8 @@ using LeadFlow.Infrastructure.Email;
 using LeadFlow.Infrastructure.Persistence;
 using LeadFlow.Infrastructure.Security;
 using LeadFlow.Infrastructure.Services;
+using LeadFlow.Application.Common.Interfaces.Repositories;
+using LeadFlow.Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,6 +25,7 @@ public static class DependencyInjection
 
 
         services.AddScoped<IApplicationDbContext>(sp => sp.GetRequiredService<AppDbContext>());
+        services.AddScoped<IOpportunityRepository, OpportunityRepository>();
 
         // ── Hangfire ──────────────────────────────────────────
         services.AddHangfire(c =>

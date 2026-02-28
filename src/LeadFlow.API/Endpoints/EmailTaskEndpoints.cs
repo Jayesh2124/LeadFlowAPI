@@ -3,9 +3,11 @@ using LeadFlow.Application.Features.EmailTasks.Commands.CancelEmailTask;
 using LeadFlow.Application.Features.EmailTasks.Commands.RescheduleEmailTask;
 using LeadFlow.Application.Features.EmailTasks.Commands.ScheduleEmail;
 using LeadFlow.Application.Features.EmailTasks.Queries.GetLeadTimeline;
+using LeadFlow.Application.Features.EmailTasks.Queries.GetLeadDetailsReport;
+using LeadFlow.Application.Features.EmailTasks.Queries.GetLeadReport;
 using LeadFlow.Application.Features.EmailTasks.Queries.GetRecentEmailTasks;
-using LeadFlow.Application.Features.EmailTasks.Queries.GetUserReport;
 using LeadFlow.Application.Features.EmailTasks.Queries.GetUserDetailsReport;
+using LeadFlow.Application.Features.EmailTasks.Queries.GetUserReport;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -74,6 +76,20 @@ public static class EmailTaskEndpoints
         group.MapGet("/reports/{userId:guid}/details", async (Guid userId, [FromQuery] string dateFilter, [FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate, IMediator mediator) =>
         {
             var result = await mediator.Send(new GetUserDetailsReportQuery(userId, dateFilter, startDate, endDate));
+            return Results.Ok(result);
+        }).WithOpenApi();
+
+        // Lead Reports
+        group.MapGet("/reports/leads", async ([FromQuery] string dateFilter, [FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate, IMediator mediator) =>
+        {
+            var result = await mediator.Send(new GetLeadReportQuery(dateFilter, startDate, endDate));
+            return Results.Ok(result);
+        }).WithOpenApi();
+
+        // Lead Details Report
+        group.MapGet("/reports/leads/{leadId:guid}/details", async (Guid leadId, [FromQuery] string dateFilter, [FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate, IMediator mediator) =>
+        {
+            var result = await mediator.Send(new GetLeadDetailsReportQuery(leadId, dateFilter, startDate, endDate));
             return Results.Ok(result);
         }).WithOpenApi();
 
