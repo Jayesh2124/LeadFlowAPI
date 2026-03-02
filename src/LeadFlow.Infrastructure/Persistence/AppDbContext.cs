@@ -16,6 +16,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<SystemSettings> SystemSettings => Set<SystemSettings>();
     public DbSet<Opportunity> Opportunities => Set<Opportunity>();
     public DbSet<OpportunityDocument> OpportunityDocuments => Set<OpportunityDocument>();
+    public DbSet<OpportunityPosition> OpportunityPositions => Set<OpportunityPosition>();
+    public DbSet<Resource> Resources => Set<Resource>();
+    public DbSet<Technology> Technologies => Set<Technology>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

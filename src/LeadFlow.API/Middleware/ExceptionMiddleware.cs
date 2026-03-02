@@ -11,7 +11,7 @@ public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddlewa
         try
         {
             await next(ctx);
-        }
+        }   
         catch (ValidationException vex)
         {
             ctx.Response.StatusCode  = (int)HttpStatusCode.BadRequest;

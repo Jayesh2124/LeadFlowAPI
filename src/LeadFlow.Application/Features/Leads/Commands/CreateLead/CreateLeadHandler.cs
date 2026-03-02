@@ -11,7 +11,9 @@ public record CreateLeadCommand(
     string FirstName, string LastName, string Email,
     string? Phone, string Company, string? Position,
     string Status, string Source, string? Notes,
-    List<string> Tags) : IRequest<Result<Guid>>;
+    List<string> Tags, string Country, string? City,
+    string? State, string? Address, string? ZipCode,
+    string? Website, List<string>? Technologies) : IRequest<Result<Guid>>;
 
 public class CreateLeadValidator : AbstractValidator<CreateLeadCommand>
 {
@@ -21,6 +23,7 @@ public class CreateLeadValidator : AbstractValidator<CreateLeadCommand>
         RuleFor(x => x.LastName).NotEmpty().MaximumLength(100);
         RuleFor(x => x.Email).NotEmpty().EmailAddress();
         RuleFor(x => x.Company).NotEmpty().MaximumLength(200);
+        RuleFor(x => x.Country).NotEmpty().WithMessage("Country is required.");
         RuleFor(x => x.Status).Must(s => new[] { "new","contacted","qualified","converted","lost" }.Contains(s))
             .WithMessage("Invalid status value.");
     }
@@ -37,9 +40,11 @@ public class CreateLeadHandler(IApplicationDbContext db, ICurrentUserService cur
             return Result<Guid>.Failure("A lead with this email already exists.");
 
         var lead = Lead.Create(currentUser.UserId, cmd.FirstName, cmd.LastName,
-            cmd.Email, cmd.Company, cmd.Source, cmd.Status);
+            cmd.Email, cmd.Company, cmd.Source, cmd.Country, cmd.Status);
         lead.Update(cmd.FirstName, cmd.LastName, cmd.Email, cmd.Phone, cmd.Company,
-            cmd.Position, cmd.Status, cmd.Source, cmd.Notes, cmd.Tags ?? []);
+            cmd.Position, cmd.Status, cmd.Source, cmd.Notes, cmd.Tags ?? [],
+            cmd.Country, cmd.City, cmd.State, cmd.Address, cmd.ZipCode,
+            cmd.Website, cmd.Technologies ?? []);
 
         db.Leads.Add(lead);
         await db.SaveChangesAsync(ct);

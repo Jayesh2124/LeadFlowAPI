@@ -15,6 +15,9 @@ public interface IApplicationDbContext
     DbSet<SystemSettings> SystemSettings { get; }
     DbSet<Opportunity> Opportunities { get; }
     DbSet<OpportunityDocument> OpportunityDocuments { get; }
+    DbSet<OpportunityPosition> OpportunityPositions { get; }
+    DbSet<Resource> Resources { get; }
+    DbSet<Technology> Technologies { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

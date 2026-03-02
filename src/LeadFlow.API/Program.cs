@@ -1,14 +1,25 @@
-using System.Text;
 using Hangfire;
 using LeadFlow.API.Endpoints;
 using LeadFlow.API.Middleware;
 using LeadFlow.Application;
+using LeadFlow.Domain.Entities;
 using LeadFlow.Infrastructure;
 using LeadFlow.Infrastructure.BackgroundJobs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.IdentityModel.Tokens;
+using System;
+using System.ComponentModel;
+using System.Diagnostics.Contracts;
+using System.Diagnostics.Metrics;
+using System.Net.NetworkInformation;
+using System.Reflection.Metadata;
+using System.Text;
+using static Dapper.SqlMapper;
+using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
+using static System.Net.WebRequestMethods;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +27,19 @@ var builder = WebApplication.CreateBuilder(args);
 // ── Application + Infrastructure ────────────────────────────
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
+
+// ── JSON: treat enums as strings (e.g. "FullTime" not 2) ─────────
+builder.Services.ConfigureHttpJsonOptions(opts =>
+{
+    opts.SerializerOptions.Converters.Add(
+        new System.Text.Json.Serialization.JsonStringEnumConverter());
+});
+// Also apply to Swagger schema generation
+builder.Services.Configure<Microsoft.AspNetCore.Mvc.JsonOptions>(opts =>
+{
+    opts.JsonSerializerOptions.Converters.Add(
+        new System.Text.Json.Serialization.JsonStringEnumConverter());
+});
 
 // ── JWT Authentication ────────────────────────────────────────
 var jwtSection = builder.Configuration.GetSection("Jwt");
@@ -117,6 +141,9 @@ app.MapSmtpSettingsEndpoints();
 app.MapSystemSettingsEndpoints();
 app.MapBlobEndpoints();
 app.MapOpportunityEndpoints(); // NEW
+app.MapPositionEndpoints();    // Phase 2 – Task 2
+app.MapResourceEndpoints();    // Phase 3 – Task 2
+app.MapTechnologyEndpoints();
 // ── Recurring Jobs ───────────────────────────────────────────
 RecurringJob.AddOrUpdate<RetryJobService>(
     "retry-pending-tasks",
@@ -143,7 +170,7 @@ using (var scope = app.Services.CreateScope())
 
     // Seed Admin user if none exists
     await SeedAsync(db);
-}
+} 
 
 app.Run();
 
@@ -161,8 +188,54 @@ static async Task SeedAsync(LeadFlow.Infrastructure.Persistence.AppDbContext db)
         await db.SaveChangesAsync();
         Console.WriteLine("✅ Admin seeded: admin@leadflow.io / Admin@12345");
     }
+
+    if (!db.Technologies.Any())
+    {
+        var techs = new[] { 
+            "Angular", "React", "Vue.js", "Node.js", "C#", ".NET Core", 
+            "Java", "Spring Boot", "Python", "Django", "AWS", "Azure", 
+            "GCP", "SQL Server", "PostgreSQL", "MongoDB", "Docker", "Kubernetes",
+            "Ruby on Rails", "PHP", "Laravel", "Swift", "Kotlin", "Flutter", "React Native"
+        };
+        foreach(var t in techs) {
+            db.Technologies.Add(LeadFlow.Domain.Entities.Technology.Create(t));
+        }
+        await db.SaveChangesAsync();
+        Console.WriteLine("✅ Technologies seeded");
+    }
 }
 
 
 // Migration commands
+
+//dotnet ef migrations add AddLeadAdditionalFields -p src\LeadFlow.Infrastructure -s src\LeadFlow.API
+
 //dotnet ef database update -p src\LeadFlow.Infrastructure -s src\LeadFlow.API
+
+
+
+//Leads -
+//    Location for Leads-- Add, City, State, County *, Zip / Pin Code
+//    Technologyy-- dropdown of tech stack-- multi / Selection field-- Master table for Tech stack
+//         --Admin rights only to change tech master table
+//    website of lead contact - URL
+
+
+//Opportunity : 
+//    Contract / Remote
+//    Contract / FTE
+//    OnSite
+//    Hybrid
+
+//    Duration : more than 1, (3 months, 6, 9)
+
+//        Documentation for Opporunity
+//        SOW
+//        MSA
+//        NDA(Yes / NO)
+
+//        Resource Document : 
+//            1.KYC-- GOV Identity Document Only one document selection based on dropdown
+//            2.CV
+//            3.Payslip-- if Resource Have Some experience
+//	    Documentation - N/A for Freshers

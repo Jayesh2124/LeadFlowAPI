@@ -1,4 +1,5 @@
 using LeadFlow.Domain.Entities;
+using LeadFlow.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -46,7 +47,19 @@ public class LeadConfiguration : IEntityTypeConfiguration<Lead>
         b.Property(l => l.Status).IsRequired().HasMaxLength(30);
         b.Property(l => l.Source).IsRequired().HasMaxLength(100);
         b.Property(l => l.Tags).HasColumnType("text[]");
+        b.Property(l => l.Technologies).HasColumnType("text[]");
         b.HasIndex(l => new { l.UserId, l.Email });
+    }
+}
+
+public class TechnologyConfiguration : IEntityTypeConfiguration<Technology>
+{
+    public void Configure(EntityTypeBuilder<Technology> b)
+    {
+        b.ToTable("technologies");
+        b.HasKey(t => t.Id);
+        b.Property(t => t.Name).IsRequired().HasMaxLength(150);
+        b.HasIndex(t => t.Name).IsUnique();
     }
 }
 
@@ -220,6 +233,165 @@ public class OpportunityDocumentConfiguration : IEntityTypeConfiguration<Opportu
         b.HasOne(d => d.UploadedByUser)
             .WithMany()
             .HasForeignKey(d => d.UploadedByUserId)
+            .OnDelete(DeleteBehavior.Restrict);
+    }
+}
+
+public class OpportunityPositionConfiguration : IEntityTypeConfiguration<OpportunityPosition>
+{
+    public void Configure(EntityTypeBuilder<OpportunityPosition> b)
+    {
+        b.ToTable("opportunity_positions");
+        b.HasKey(p => p.Id);
+
+        // ── Primary key ──────────────────────────────────────────────────────
+        b.Property(p => p.Id)
+            .HasColumnName("id")
+            .HasColumnType("uuid")
+            .ValueGeneratedNever(); // Guid.NewGuid() is set in BaseEntity
+
+        // ── Audit columns (from BaseEntity) ─────────────────────────────────
+        b.Property(p => p.CreatedAt)
+            .HasColumnName("created_at")
+            .IsRequired();
+
+        b.Property(p => p.UpdatedAt)
+            .HasColumnName("updated_at");
+
+        // ── Foreign key ──────────────────────────────────────────────────────
+        b.Property(p => p.OpportunityId)
+            .HasColumnName("opportunity_id")
+            .HasColumnType("uuid")
+            .IsRequired();
+
+        // ── Core fields ──────────────────────────────────────────────────────
+        b.Property(p => p.RoleTitle)
+            .HasColumnName("role_title")
+            .IsRequired()
+            .HasMaxLength(200);
+
+        b.Property(p => p.QuantityRequired)
+            .HasColumnName("quantity_required")
+            .IsRequired();
+
+        b.Property(p => p.ExperienceMin)
+            .HasColumnName("experience_min");
+
+        b.Property(p => p.ExperienceMax)
+            .HasColumnName("experience_max");
+
+        b.Property(p => p.Skills)
+            .HasColumnName("skills")
+            .HasMaxLength(2000);
+
+        b.Property(p => p.Location)
+            .HasColumnName("location")
+            .HasMaxLength(200);
+
+        // ── Enum columns (stored as string) ──────────────────────────────────
+        b.Property(p => p.EmploymentType)
+            .HasColumnName("employment_type")
+            .HasConversion<string>()
+            .HasMaxLength(50)
+            .IsRequired();
+
+        b.Property(p => p.Status)
+            .HasColumnName("status")
+            .HasConversion<string>()
+            .HasMaxLength(50)
+            .IsRequired();
+
+        // ── Indexes ──────────────────────────────────────────────────────────
+        b.HasIndex(p => p.OpportunityId)
+            .HasDatabaseName("ix_opportunity_positions_opportunity_id");
+
+        b.HasIndex(p => p.Status)
+            .HasDatabaseName("ix_opportunity_positions_status");
+
+        // ── Relationships ────────────────────────────────────────────────────
+        b.HasOne(p => p.Opportunity)
+            .WithMany(o => o.Positions)
+            .HasForeignKey(p => p.OpportunityId)
+            .HasConstraintName("fk_opportunity_positions_opportunities_id")
+            .OnDelete(DeleteBehavior.Cascade);
+    }
+}
+
+public class ResourceConfiguration : IEntityTypeConfiguration<Resource>
+{
+    public void Configure(EntityTypeBuilder<Resource> b)
+    {
+        b.ToTable("resources");
+        b.HasKey(r => r.Id);
+
+        b.Property(r => r.Id)
+            .HasColumnName("id")
+            .HasColumnType("uuid")
+            .ValueGeneratedNever();
+
+        b.Property(r => r.UserId)
+            .HasColumnName("user_id")
+            .HasColumnType("uuid")
+            .IsRequired();
+
+        b.Property(r => r.FullName)
+            .HasColumnName("full_name")
+            .IsRequired()
+            .HasMaxLength(200);
+
+        b.Property(r => r.Email)
+            .HasColumnName("email")
+            .IsRequired()
+            .HasMaxLength(200);
+
+        b.Property(r => r.Phone)
+            .HasColumnName("phone")
+            .HasMaxLength(20);
+
+        b.Property(r => r.TotalExperience)
+            .HasColumnName("total_experience")
+            .HasColumnType("numeric(4,1)");
+
+        b.Property(r => r.CurrentLocation)
+            .HasColumnName("current_location")
+            .HasMaxLength(200);
+
+        b.Property(r => r.Summary)
+            .HasColumnName("summary")
+            .HasMaxLength(2000);
+
+        b.Property(r => r.Source)
+            .HasColumnName("source")
+            .HasMaxLength(100);
+
+        b.Property(r => r.Status)
+            .HasColumnName("status")
+            .HasConversion<string>()
+            .HasMaxLength(50)
+            .HasDefaultValue(ResourceStatus.Active)
+            .IsRequired();
+
+        b.Property(r => r.IsDeleted)
+            .HasColumnName("is_deleted")
+            .HasDefaultValue(false)
+            .IsRequired();
+
+        b.Property(r => r.CreatedAt)
+            .HasColumnName("created_at")
+            .IsRequired();
+
+        b.Property(r => r.UpdatedAt)
+            .HasColumnName("updated_at")
+            .IsRequired(false);
+
+        // Required constraints & indexes
+        b.HasIndex(r => new { r.UserId, r.Email }).IsUnique();
+        b.HasIndex(r => r.UserId);
+        b.HasIndex(r => r.Email);
+
+        b.HasOne(r => r.User)
+            .WithMany()
+            .HasForeignKey(r => r.UserId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

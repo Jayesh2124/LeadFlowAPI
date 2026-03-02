@@ -16,6 +16,15 @@ public class Lead : BaseEntity
     public string? Notes { get; private set; }
     public List<string> Tags { get; private set; } = [];
     public bool IsActive { get; private set; } = true;
+    
+    // New fields
+    public string Country { get; private set; } = "";
+    public string? City { get; private set; }
+    public string? State { get; private set; }
+    public string? Address { get; private set; }
+    public string? ZipCode { get; private set; }
+    public string? Website { get; private set; }
+    public List<string> Technologies { get; private set; } = [];
 
     // Navigation
     public User User { get; private set; } = null!;
@@ -24,21 +33,25 @@ public class Lead : BaseEntity
     protected Lead() { }
 
     public static Lead Create(Guid userId, string firstName, string lastName,
-        string email, string company, string source, string status = "new")
+        string email, string company, string source, string country = "", string status = "new")
         => new Lead
         {
             UserId = userId, FirstName = firstName, LastName = lastName,
-            Email = email, Company = company, Source = source, Status = status,
-            IsActive = true
+            Email = email, Company = company, Source = source,
+            Country = country, Status = status, IsActive = true
         };
 
     public void Update(string firstName, string lastName, string email,
         string? phone, string company, string? position,
-        string status, string source, string? notes, List<string> tags)
+        string status, string source, string? notes, List<string> tags,
+        string country, string? city, string? state, string? address,
+        string? zipCode, string? website, List<string> technologies)
     {
         FirstName = firstName; LastName = lastName; Email = email;
         Phone = phone; Company = company; Position = position;
         Status = status; Source = source; Notes = notes; Tags = tags;
+        Country = country; City = city; State = state; Address = address;
+        ZipCode = zipCode; Website = website; Technologies = technologies;
         
         if (Status != "inactive") IsActive = true;
         

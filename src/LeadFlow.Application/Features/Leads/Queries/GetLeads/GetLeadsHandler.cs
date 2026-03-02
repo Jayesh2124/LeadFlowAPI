@@ -14,7 +14,9 @@ public record GetLeadsQuery(
 public record LeadDto(Guid Id, string FirstName, string LastName, string Email,
     string? Phone, string Company, string? Position, string Status,
     string Source, string? Notes, List<string> Tags, bool IsActive,
-    DateTime CreatedAt, DateTime UpdatedAt);
+    DateTime CreatedAt, DateTime? UpdatedAt, string Country, string? City,
+    string? State, string? Address, string? ZipCode, string? Website,
+    List<string> Technologies);
 
 public record PagedLeadsResult(List<LeadDto> Items, int Total, int Page, int PageSize);
 
@@ -55,7 +57,9 @@ public class GetLeadsHandler(IApplicationDbContext db, ICurrentUserService curre
             .Take(q.PageSize)
             .Select(l => new LeadDto(l.Id, l.FirstName, l.LastName, l.Email,
                 l.Phone, l.Company, l.Position, l.Status, l.Source,
-                l.Notes, l.Tags, l.IsActive, l.CreatedAt, l.UpdatedAt))
+                l.Notes, l.Tags, l.IsActive, l.CreatedAt, l.UpdatedAt,
+                l.Country, l.City, l.State, l.Address, l.ZipCode, l.Website,
+                l.Technologies))
             .ToListAsync(ct);
 
         return Result<PagedLeadsResult>.Success(new PagedLeadsResult(items, total, q.Page, q.PageSize));

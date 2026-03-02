@@ -27,6 +27,7 @@ public class Opportunity : BaseEntity
     public User CreatedByUser { get; private set; } = null!;
     public User OwnerUser { get; private set; } = null!;
     public ICollection<OpportunityDocument> Documents { get; private set; } = [];
+    public ICollection<OpportunityPosition> Positions { get; private set; } = [];
 
     protected Opportunity() { }
 
