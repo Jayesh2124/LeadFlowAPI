@@ -20,7 +20,10 @@ public record OpportunityResponse(
     DateTime? ExpectedEndDate,
     DateTime CreatedAt,
     DateTime? UpdatedAt,
-    List<OpportunityDocumentDto> Documents);
+    List<OpportunityDocumentDto> Documents,
+    string? WorkMode = null,
+    string? Duration = null,
+    bool? NdaSigned = null);
     
 public record OpportunityDocumentDto(
     Guid Id,

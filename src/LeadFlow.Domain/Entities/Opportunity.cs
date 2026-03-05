@@ -20,6 +20,9 @@ public class Opportunity : BaseEntity
     public DateTime? ExpectedStartDate { get; private set; }
     public DateTime? ExpectedEndDate { get; private set; }
     public bool IsDeleted { get; private set; }
+    public string? WorkMode { get; private set; }
+    public string? Duration { get; private set; }
+    public bool? NdaSigned { get; private set; }
 
 
     // Navigation properties
@@ -41,7 +44,10 @@ public class Opportunity : BaseEntity
         OpportunityPriority priority,
         decimal expectedValue,
         DateTime? expectedStartDate = null,
-        DateTime? expectedEndDate = null)
+        DateTime? expectedEndDate = null,
+        string? workMode = null,
+        string? duration = null,
+        bool? ndaSigned = null)
     {
         return new Opportunity
         {
@@ -55,7 +61,10 @@ public class Opportunity : BaseEntity
             Priority = priority,
             ExpectedValue = expectedValue,
             ExpectedStartDate = expectedStartDate,
-            ExpectedEndDate = expectedEndDate
+            ExpectedEndDate = expectedEndDate,
+            WorkMode = workMode,
+            Duration = duration,
+            NdaSigned = ndaSigned
         };
     }
 
@@ -68,7 +77,10 @@ public class Opportunity : BaseEntity
         decimal expectedValue,
         DateTime? expectedStartDate,
         DateTime? expectedEndDate,
-        Guid ownerUserId)
+        Guid ownerUserId,
+        string? workMode,
+        string? duration,
+        bool? ndaSigned)
     {
         Title = title;
         Description = description;
@@ -79,6 +91,9 @@ public class Opportunity : BaseEntity
         ExpectedStartDate = expectedStartDate;
         ExpectedEndDate = expectedEndDate;
         OwnerUserId = ownerUserId;
+        WorkMode = workMode;
+        Duration = duration;
+        NdaSigned = ndaSigned;
         
         Touch();
     }

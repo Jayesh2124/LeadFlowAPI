@@ -45,6 +45,8 @@ public record ResourceFilterRequest
     public decimal? MaxExperience { get; init; }
     public string? Location { get; init; }
     public bool? MyResources { get; init; }
+    public bool? ExcludeSelected { get; init; }
+    public Guid? ExcludePositionId { get; init; }
     public int? Page { get; init; }
     public int? PageSize { get; init; }
 }

@@ -4,5 +4,8 @@ public enum EmploymentType
 {
     C2C,
     Contract,
-    FullTime
+    FullTime,
+    PartTime,
+    Internship,
+    Freelance
 }

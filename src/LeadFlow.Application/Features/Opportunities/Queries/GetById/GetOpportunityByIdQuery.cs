@@ -60,7 +60,10 @@ public class GetOpportunityByIdQueryHandler : IRequestHandler<GetOpportunityById
                 FileName: d.FileName,
                 FileUrl: d.FileUrl,
                 UploadedAt: d.CreatedAt
-            )).ToList()
+            )).ToList(),
+            WorkMode: opportunity.WorkMode,
+            Duration: opportunity.Duration,
+            NdaSigned: opportunity.NdaSigned
         );
     }
 }

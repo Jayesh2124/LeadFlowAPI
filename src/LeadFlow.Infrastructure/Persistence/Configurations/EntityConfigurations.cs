@@ -395,3 +395,321 @@ public class ResourceConfiguration : IEntityTypeConfiguration<Resource>
             .OnDelete(DeleteBehavior.Restrict);
     }
 }
+
+// ══════════════════════════════════════════════════════════════
+// Resource Profile — child entity configurations
+// ══════════════════════════════════════════════════════════════
+
+public class ResourceEmploymentConfiguration : IEntityTypeConfiguration<ResourceEmployment>
+{
+    public void Configure(EntityTypeBuilder<ResourceEmployment> b)
+    {
+        b.ToTable("resource_employments");
+        b.HasKey(e => e.Id);
+
+        b.Property(e => e.Id)
+            .HasColumnName("id")
+            .HasColumnType("uuid")
+            .ValueGeneratedNever();
+
+        b.Property(e => e.ResourceId)
+            .HasColumnName("resource_id")
+            .HasColumnType("uuid")
+            .IsRequired();
+
+        b.Property(e => e.CompanyName)
+            .HasColumnName("company_name")
+            .IsRequired()
+            .HasMaxLength(200);
+
+        b.Property(e => e.Designation)
+            .HasColumnName("designation")
+            .IsRequired()
+            .HasMaxLength(200);
+
+        b.Property(e => e.EmploymentType)
+            .HasColumnName("employment_type")
+            .HasConversion<string>()
+            .HasMaxLength(50)
+            .IsRequired();
+
+        b.Property(e => e.StartDate)
+            .HasColumnName("start_date")
+            .HasColumnType("date");
+
+        b.Property(e => e.EndDate)
+            .HasColumnName("end_date")
+            .HasColumnType("date");
+
+        b.Property(e => e.IsCurrent)
+            .HasColumnName("is_current")
+            .HasDefaultValue(false)
+            .IsRequired();
+
+        b.Property(e => e.Responsibilities)
+            .HasColumnName("responsibilities")
+            .HasMaxLength(2000);
+
+        b.Property(e => e.CreatedAt)
+            .HasColumnName("created_at")
+            .IsRequired();
+
+        b.Property(e => e.UpdatedAt)
+            .HasColumnName("updated_at");
+
+        // Indexes
+        b.HasIndex(e => e.ResourceId)
+            .HasDatabaseName("ix_resource_employments_resource_id");
+
+        // Relationship — cascade delete when the parent resource is removed
+        b.HasOne(e => e.Resource)
+            .WithMany(r => r.Employments)
+            .HasForeignKey(e => e.ResourceId)
+            .HasConstraintName("fk_resource_employments_resources_id")
+            .OnDelete(DeleteBehavior.Cascade);
+    }
+}
+
+public class ResourceApplicationDetailConfiguration : IEntityTypeConfiguration<ResourceApplicationDetail>
+{
+    public void Configure(EntityTypeBuilder<ResourceApplicationDetail> b)
+    {
+        b.ToTable("resource_application_details");
+
+        // Shared PK — resource_id IS the primary key
+        b.HasKey(a => a.ResourceId);
+
+        b.Property(a => a.ResourceId)
+            .HasColumnName("resource_id")
+            .HasColumnType("uuid")
+            .ValueGeneratedNever();
+
+        b.Property(a => a.CurrentCtc)
+            .HasColumnName("current_ctc")
+            .HasColumnType("numeric(18,2)");
+
+        b.Property(a => a.ExpectedCtc)
+            .HasColumnName("expected_ctc")
+            .HasColumnType("numeric(18,2)");
+
+        b.Property(a => a.NoticePeriodDays)
+            .HasColumnName("notice_period_days");
+
+        b.Property(a => a.PreferredLocation)
+            .HasColumnName("preferred_location")
+            .HasMaxLength(200);
+
+        b.Property(a => a.AvailabilityDate)
+            .HasColumnName("availability_date")
+            .HasColumnType("date");
+
+        b.Property(a => a.WillingToRelocate)
+            .HasColumnName("willing_to_relocate")
+            .HasDefaultValue(false)
+            .IsRequired();
+
+        b.Property(a => a.WorkModePreference)
+            .HasColumnName("work_mode_preference")
+            .HasConversion<string>()
+            .HasMaxLength(50);
+
+        b.Property(a => a.Skills)
+            .HasColumnName("skills")
+            .HasMaxLength(2000);
+
+        b.Property(a => a.Certifications)
+            .HasColumnName("certifications")
+            .HasMaxLength(2000);
+
+        b.Property(a => a.PortfolioUrl)
+            .HasColumnName("portfolio_url")
+            .HasMaxLength(500);
+
+        b.Property(a => a.PositionName)
+            .HasColumnName("position_name")
+            .HasMaxLength(200);
+
+        b.Property(a => a.CreatedAt)
+            .HasColumnName("created_at")
+            .IsRequired();
+
+        b.Property(a => a.UpdatedAt)
+            .HasColumnName("updated_at");
+
+        // 1:1 relationship — FK is also the PK
+        b.HasOne(a => a.Resource)
+            .WithOne(r => r.ApplicationDetail)
+            .HasForeignKey<ResourceApplicationDetail>(a => a.ResourceId)
+            .HasConstraintName("fk_resource_application_details_resources_id")
+            .OnDelete(DeleteBehavior.Cascade);
+    }
+}
+
+public class ResourceReferenceConfiguration : IEntityTypeConfiguration<ResourceReference>
+{
+    public void Configure(EntityTypeBuilder<ResourceReference> b)
+    {
+        b.ToTable("resource_references");
+        b.HasKey(r => r.Id);
+
+        b.Property(r => r.Id)
+            .HasColumnName("id")
+            .HasColumnType("uuid")
+            .ValueGeneratedNever();
+
+        b.Property(r => r.ResourceId)
+            .HasColumnName("resource_id")
+            .HasColumnType("uuid")
+            .IsRequired();
+
+        b.Property(r => r.ReferenceType)
+            .HasColumnName("reference_type")
+            .HasConversion<string>()
+            .HasMaxLength(50)
+            .IsRequired();
+
+        b.Property(r => r.ReferredByUserId)
+            .HasColumnName("referred_by_user_id")
+            .HasColumnType("uuid");
+
+        b.Property(r => r.ReferredByLeadId)
+            .HasColumnName("referred_by_lead_id")
+            .HasColumnType("uuid");
+
+        b.Property(r => r.VendorName)
+            .HasColumnName("vendor_name")
+            .HasMaxLength(200);
+
+        b.Property(r => r.PortalName)
+            .HasColumnName("portal_name")
+            .HasMaxLength(200);
+
+        b.Property(r => r.ContactName)
+            .HasColumnName("contact_name")
+            .IsRequired()
+            .HasMaxLength(200);
+
+        b.Property(r => r.ContactPhone)
+            .HasColumnName("contact_phone")
+            .HasMaxLength(20);
+
+        b.Property(r => r.ContactEmail)
+            .HasColumnName("contact_email")
+            .HasMaxLength(200);
+
+        b.Property(r => r.Notes)
+            .HasColumnName("notes")
+            .HasMaxLength(2000);
+
+        b.Property(r => r.CreatedAt)
+            .HasColumnName("created_at")
+            .IsRequired();
+
+        b.Property(r => r.UpdatedAt)
+            .HasColumnName("updated_at");
+
+        // Indexes
+        b.HasIndex(r => r.ResourceId)
+            .HasDatabaseName("ix_resource_references_resource_id");
+
+        b.HasIndex(r => r.ReferenceType)
+            .HasDatabaseName("ix_resource_references_reference_type");
+
+        // Relationships
+        b.HasOne(r => r.Resource)
+            .WithMany(res => res.References)
+            .HasForeignKey(r => r.ResourceId)
+            .HasConstraintName("fk_resource_references_resources_id")
+            .OnDelete(DeleteBehavior.Cascade);
+
+        b.HasOne(r => r.ReferredByUser)
+            .WithMany()
+            .HasForeignKey(r => r.ReferredByUserId)
+            .HasConstraintName("fk_resource_references_users_id")
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        b.HasOne(r => r.ReferredByLead)
+            .WithMany()
+            .HasForeignKey(r => r.ReferredByLeadId)
+            .HasConstraintName("fk_resource_references_leads_id")
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.SetNull);
+    }
+}
+
+public class ResourceDocumentConfiguration : IEntityTypeConfiguration<ResourceDocument>
+{
+    public void Configure(EntityTypeBuilder<ResourceDocument> b)
+    {
+        b.ToTable("resource_documents");
+        b.HasKey(d => d.Id);
+
+        b.Property(d => d.Id)
+            .HasColumnName("id")
+            .HasColumnType("uuid")
+            .ValueGeneratedNever();
+
+        b.Property(d => d.ResourceId)
+            .HasColumnName("resource_id")
+            .HasColumnType("uuid")
+            .IsRequired();
+
+        b.Property(d => d.DocumentType)
+            .HasColumnName("document_type")
+            .HasConversion<string>()
+            .HasMaxLength(50)
+            .IsRequired();
+
+        b.Property(d => d.KycDocumentType)
+            .HasColumnName("kyc_document_type")
+            .HasConversion<string>()
+            .HasMaxLength(50);
+
+        b.Property(d => d.FileName)
+            .HasColumnName("file_name")
+            .IsRequired()
+            .HasMaxLength(300);
+
+        b.Property(d => d.FileUrl)
+            .HasColumnName("file_url")
+            .IsRequired()
+            .HasMaxLength(1000);
+
+        b.Property(d => d.FileSizeBytes)
+            .HasColumnName("file_size_bytes")
+            .IsRequired();
+
+        b.Property(d => d.UploadedByUserId)
+            .HasColumnName("uploaded_by_user_id")
+            .HasColumnType("uuid")
+            .IsRequired();
+
+        b.Property(d => d.CreatedAt)
+            .HasColumnName("created_at")
+            .IsRequired();
+
+        b.Property(d => d.UpdatedAt)
+            .HasColumnName("updated_at");
+
+        // Indexes
+        b.HasIndex(d => d.ResourceId)
+            .HasDatabaseName("ix_resource_documents_resource_id");
+
+        b.HasIndex(d => d.DocumentType)
+            .HasDatabaseName("ix_resource_documents_document_type");
+
+        // Relationships
+        b.HasOne(d => d.Resource)
+            .WithMany(r => r.Documents)
+            .HasForeignKey(d => d.ResourceId)
+            .HasConstraintName("fk_resource_documents_resources_id")
+            .OnDelete(DeleteBehavior.Cascade);
+
+        b.HasOne(d => d.UploadedByUser)
+            .WithMany()
+            .HasForeignKey(d => d.UploadedByUserId)
+            .HasConstraintName("fk_resource_documents_users_id")
+            .OnDelete(DeleteBehavior.Restrict);
+    }
+}

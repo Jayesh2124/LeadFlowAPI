@@ -11,4 +11,7 @@ public record CreateOpportunityRequest(
     decimal ExpectedValue,
     DateTime? ExpectedStartDate,
     DateTime? ExpectedEndDate,
-    Guid? OwnerUserId);
+    Guid? OwnerUserId,
+    string? WorkMode = null,
+    string? Duration = null,
+    bool? NdaSigned = null);

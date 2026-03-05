@@ -53,6 +53,7 @@ public static class DependencyInjection
         services.AddScoped<IEmailSenderFactory, EmailSenderFactory>();
         services.AddScoped<ISmtpConnectionTester, SmtpConnectionTester>();
         services.AddScoped<IEmailTaskProcessor, HangfireEmailTaskProcessor>();
+        services.AddScoped<IInterviewEmailService, InterviewEmailService>();
         services.AddScoped<RetryJobService>();
         services.AddSingleton<IBlobStorageService, LeadFlow.Infrastructure.Storage.AzureBlobStorageService>();
 

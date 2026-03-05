@@ -19,6 +19,14 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<OpportunityPosition> OpportunityPositions => Set<OpportunityPosition>();
     public DbSet<Resource> Resources => Set<Resource>();
     public DbSet<Technology> Technologies => Set<Technology>();
+    public DbSet<ResourceEmployment> ResourceEmployments => Set<ResourceEmployment>();
+    public DbSet<ResourceApplicationDetail> ResourceApplicationDetails => Set<ResourceApplicationDetail>();
+    public DbSet<ResourceReference> ResourceReferences => Set<ResourceReference>();
+    public DbSet<ResourceDocument> ResourceDocuments => Set<ResourceDocument>();
+
+    public DbSet<ResourceAssignment> ResourceAssignments => Set<ResourceAssignment>();
+    public DbSet<AssignmentInterview> AssignmentInterviews => Set<AssignmentInterview>();
+    public DbSet<AssignmentStageHistory> AssignmentStageHistories => Set<AssignmentStageHistory>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

@@ -19,6 +19,17 @@ public class Resource : BaseEntity
     // Navigation
     public User User { get; private set; } = null!;
 
+    public IReadOnlyCollection<ResourceEmployment> Employments { get; private set; }
+        = new List<ResourceEmployment>();
+
+    public ResourceApplicationDetail? ApplicationDetail { get; private set; }
+
+    public IReadOnlyCollection<ResourceReference> References { get; private set; }
+        = new List<ResourceReference>();
+
+    public IReadOnlyCollection<ResourceDocument> Documents { get; private set; }
+        = new List<ResourceDocument>();
+
     protected Resource() { }
 
     public static Resource Create(

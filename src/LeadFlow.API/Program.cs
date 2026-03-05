@@ -144,6 +144,8 @@ app.MapOpportunityEndpoints(); // NEW
 app.MapPositionEndpoints();    // Phase 2 – Task 2
 app.MapResourceEndpoints();    // Phase 3 – Task 2
 app.MapTechnologyEndpoints();
+app.MapAssignmentEndpoints();
+app.MapReportsEndpoints();
 // ── Recurring Jobs ───────────────────────────────────────────
 RecurringJob.AddOrUpdate<RetryJobService>(
     "retry-pending-tasks",

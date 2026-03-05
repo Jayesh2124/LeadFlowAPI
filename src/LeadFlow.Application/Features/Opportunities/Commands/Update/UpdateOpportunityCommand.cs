@@ -82,7 +82,10 @@ public class UpdateOpportunityCommandHandler : IRequestHandler<UpdateOpportunity
             request.Request.ExpectedValue,
             request.Request.ExpectedStartDate,
             request.Request.ExpectedEndDate,
-            request.Request.OwnerUserId);
+            request.Request.OwnerUserId,
+            request.Request.WorkMode,
+            request.Request.Duration,
+            request.Request.NdaSigned);
 
         await _opportunityRepository.UpdateAsync(opportunity, cancellationToken);
     }

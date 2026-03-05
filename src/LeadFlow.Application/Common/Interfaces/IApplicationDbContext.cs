@@ -18,6 +18,14 @@ public interface IApplicationDbContext
     DbSet<OpportunityPosition> OpportunityPositions { get; }
     DbSet<Resource> Resources { get; }
     DbSet<Technology> Technologies { get; }
+    DbSet<ResourceEmployment> ResourceEmployments { get; }
+    DbSet<ResourceApplicationDetail> ResourceApplicationDetails { get; }
+    DbSet<ResourceReference> ResourceReferences { get; }
+    DbSet<ResourceDocument> ResourceDocuments { get; }
+
+    DbSet<ResourceAssignment> ResourceAssignments { get; }
+    DbSet<AssignmentInterview> AssignmentInterviews { get; }
+    DbSet<AssignmentStageHistory> AssignmentStageHistories { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

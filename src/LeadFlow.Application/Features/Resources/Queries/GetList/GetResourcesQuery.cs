@@ -29,15 +29,29 @@ public class GetResourcesQueryHandler : IRequestHandler<GetResourcesQuery, Paged
             .AsNoTracking()
             .Where(r => !r.IsDeleted);
 
-        // myResources filter
-        if (filter.MyResources == true)
+        // Non-admins only see their own resources
+        if (!_currentUserService.IsAdmin)
         {
             query = query.Where(r => r.UserId == _currentUserService.UserId);
         }
-        else if (!_currentUserService.IsAdmin)
+        else if (filter.MyResources == true)
         {
-            // Non-admins only see their own resources
             query = query.Where(r => r.UserId == _currentUserService.UserId);
+        }
+
+        // Exclude selected resources filter
+        if (filter.ExcludeSelected == true)
+        {
+            query = query.Where(r => !_context.ResourceAssignments.Any(ra => 
+                ra.ResourceId == r.Id && 
+                (ra.Stage == AssignmentStage.Selected || ra.Stage == AssignmentStage.Onboarded)));
+        }
+
+        // Exclude resources already assigned to a specific position
+        if (filter.ExcludePositionId.HasValue)
+        {
+            query = query.Where(r => !_context.ResourceAssignments.Any(ra => 
+                ra.ResourceId == r.Id && ra.PositionId == filter.ExcludePositionId.Value));
         }
 
         // Status filter

@@ -16,19 +16,19 @@ public class AzureBlobStorageService : IBlobStorageService
 
     public AzureBlobStorageService(IConfiguration configuration)
     {
-        var connectionString = configuration["AzureBlobStorage:ConnectionString"];
-        var containerName = configuration["AzureBlobStorage:ContainerName"] ?? "attachments";
+        //var connectionString = configuration["AzureBlobStorage:ConnectionString"];
+        //var containerName = configuration["AzureBlobStorage:ContainerName"] ?? "attachments";
 
-        if (string.IsNullOrEmpty(connectionString))
-        {
-            throw new InvalidOperationException("AzureBlobStorage:ConnectionString is missing in configuration.");
-        }
+        //if (string.IsNullOrEmpty(connectionString))
+        //{
+        //    throw new InvalidOperationException("AzureBlobStorage:ConnectionString is missing in configuration.");
+        //}
 
-        var blobServiceClient = new BlobServiceClient(connectionString);
-        _containerClient = blobServiceClient.GetBlobContainerClient(containerName);
+        //var blobServiceClient = new BlobServiceClient(connectionString);
+        //_containerClient = blobServiceClient.GetBlobContainerClient(containerName);
         
-        // Ensure container exists
-        _containerClient.CreateIfNotExists(PublicAccessType.None);
+        //// Ensure container exists
+        //_containerClient.CreateIfNotExists(PublicAccessType.None);
     }
 
     public async Task<string> UploadAsync(Stream content, string contentType, string fileName, CancellationToken cancellationToken = default)

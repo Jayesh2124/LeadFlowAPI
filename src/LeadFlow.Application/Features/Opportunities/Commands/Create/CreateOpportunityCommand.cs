@@ -69,7 +69,10 @@ public class CreateOpportunityCommandHandler : IRequestHandler<CreateOpportunity
             request.Request.Priority,
             request.Request.ExpectedValue,
             request.Request.ExpectedStartDate,
-            request.Request.ExpectedEndDate);
+            request.Request.ExpectedEndDate,
+            request.Request.WorkMode,
+            request.Request.Duration,
+            request.Request.NdaSigned);
 
         await _opportunityRepository.AddAsync(opportunity, cancellationToken);
         

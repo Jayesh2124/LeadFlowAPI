@@ -19,7 +19,7 @@ public class UpdateLeadHandler(IApplicationDbContext db, ICurrentUserService cur
     public async Task<Result> Handle(UpdateLeadCommand cmd, CancellationToken ct)
     {
         var lead = await db.Leads
-            .FirstOrDefaultAsync(l => l.Id == cmd.Id && l.UserId == currentUser.UserId, ct);
+            .FirstOrDefaultAsync(l => l.Id == cmd.Id, ct);
         if (lead is null) return Result.Failure("Lead not found.");
 
         lead.Update(cmd.FirstName, cmd.LastName, cmd.Email, cmd.Phone, cmd.Company,

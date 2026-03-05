@@ -23,6 +23,97 @@ namespace LeadFlow.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("LeadFlow.Domain.Entities.AssignmentInterview", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AssignmentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Feedback")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<string>("InterviewStage")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("InterviewerEmail")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("InterviewerName")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<DateTime>("ScheduledAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AssignmentId");
+
+                    b.HasIndex("InterviewStage");
+
+                    b.ToTable("assignment_interviews", (string)null);
+                });
+
+            modelBuilder.Entity("LeadFlow.Domain.Entities.AssignmentStageHistory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AssignmentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("ChangedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("ChangedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("NewStage")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("PreviousStage")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AssignmentId");
+
+                    b.HasIndex("ChangedByUserId");
+
+                    b.ToTable("assignment_stage_history", (string)null);
+                });
+
             modelBuilder.Entity("LeadFlow.Domain.Entities.EmailAttempt", b =>
                 {
                     b.Property<Guid>("Id")
@@ -352,6 +443,9 @@ namespace LeadFlow.Infrastructure.Migrations
                         .HasColumnType("character varying(2000)")
                         .HasColumnName("description");
 
+                    b.Property<string>("Duration")
+                        .HasColumnType("text");
+
                     b.Property<DateTime?>("ExpectedEndDate")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("expected_end_date");
@@ -370,6 +464,9 @@ namespace LeadFlow.Infrastructure.Migrations
                     b.Property<Guid>("LeadId")
                         .HasColumnType("uuid")
                         .HasColumnName("lead_id");
+
+                    b.Property<bool?>("NdaSigned")
+                        .HasColumnType("boolean");
 
                     b.Property<Guid>("OwnerUserId")
                         .HasColumnType("uuid")
@@ -402,6 +499,9 @@ namespace LeadFlow.Infrastructure.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
+
+                    b.Property<string>("WorkMode")
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -615,6 +715,334 @@ namespace LeadFlow.Infrastructure.Migrations
                     b.ToTable("resources", (string)null);
                 });
 
+            modelBuilder.Entity("LeadFlow.Domain.Entities.ResourceApplicationDetail", b =>
+                {
+                    b.Property<Guid>("ResourceId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("resource_id");
+
+                    b.Property<DateOnly?>("AvailabilityDate")
+                        .HasColumnType("date")
+                        .HasColumnName("availability_date");
+
+                    b.Property<string>("Certifications")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("certifications");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<decimal?>("CurrentCtc")
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("current_ctc");
+
+                    b.Property<decimal?>("ExpectedCtc")
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("expected_ctc");
+
+                    b.Property<int?>("NoticePeriodDays")
+                        .HasColumnType("integer")
+                        .HasColumnName("notice_period_days");
+
+                    b.Property<string>("PortfolioUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("portfolio_url");
+
+                    b.Property<string>("PositionName")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("position_name");
+
+                    b.Property<string>("PreferredLocation")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("preferred_location");
+
+                    b.Property<string>("Skills")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("skills");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<bool>("WillingToRelocate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("willing_to_relocate");
+
+                    b.Property<string>("WorkModePreference")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("work_mode_preference");
+
+                    b.HasKey("ResourceId");
+
+                    b.ToTable("resource_application_details", (string)null);
+                });
+
+            modelBuilder.Entity("LeadFlow.Domain.Entities.ResourceAssignment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("AssignedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("AssignedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<Guid>("PositionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ResourceId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Stage")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AssignedByUserId");
+
+                    b.HasIndex("PositionId");
+
+                    b.HasIndex("ResourceId");
+
+                    b.HasIndex("Stage");
+
+                    b.HasIndex("PositionId", "ResourceId")
+                        .IsUnique();
+
+                    b.ToTable("resource_assignments", (string)null);
+                });
+
+            modelBuilder.Entity("LeadFlow.Domain.Entities.ResourceDocument", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("DocumentType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("document_type");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("file_name");
+
+                    b.Property<long>("FileSizeBytes")
+                        .HasColumnType("bigint")
+                        .HasColumnName("file_size_bytes");
+
+                    b.Property<string>("FileUrl")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("file_url");
+
+                    b.Property<string>("KycDocumentType")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("kyc_document_type");
+
+                    b.Property<Guid>("ResourceId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("resource_id");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid>("UploadedByUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("uploaded_by_user_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DocumentType")
+                        .HasDatabaseName("ix_resource_documents_document_type");
+
+                    b.HasIndex("ResourceId")
+                        .HasDatabaseName("ix_resource_documents_resource_id");
+
+                    b.HasIndex("UploadedByUserId");
+
+                    b.ToTable("resource_documents", (string)null);
+                });
+
+            modelBuilder.Entity("LeadFlow.Domain.Entities.ResourceEmployment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("CompanyName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("company_name");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Designation")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("designation");
+
+                    b.Property<string>("EmploymentType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("employment_type");
+
+                    b.Property<DateOnly?>("EndDate")
+                        .HasColumnType("date")
+                        .HasColumnName("end_date");
+
+                    b.Property<bool>("IsCurrent")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_current");
+
+                    b.Property<Guid>("ResourceId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("resource_id");
+
+                    b.Property<string>("Responsibilities")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("responsibilities");
+
+                    b.Property<DateOnly?>("StartDate")
+                        .HasColumnType("date")
+                        .HasColumnName("start_date");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ResourceId")
+                        .HasDatabaseName("ix_resource_employments_resource_id");
+
+                    b.ToTable("resource_employments", (string)null);
+                });
+
+            modelBuilder.Entity("LeadFlow.Domain.Entities.ResourceReference", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("ContactEmail")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("contact_email");
+
+                    b.Property<string>("ContactName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("contact_name");
+
+                    b.Property<string>("ContactPhone")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("contact_phone");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("notes");
+
+                    b.Property<string>("PortalName")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("portal_name");
+
+                    b.Property<string>("ReferenceType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("reference_type");
+
+                    b.Property<Guid?>("ReferredByLeadId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("referred_by_lead_id");
+
+                    b.Property<Guid?>("ReferredByUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("referred_by_user_id");
+
+                    b.Property<Guid>("ResourceId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("resource_id");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<string>("VendorName")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("vendor_name");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReferenceType")
+                        .HasDatabaseName("ix_resource_references_reference_type");
+
+                    b.HasIndex("ReferredByLeadId");
+
+                    b.HasIndex("ReferredByUserId");
+
+                    b.HasIndex("ResourceId")
+                        .HasDatabaseName("ix_resource_references_resource_id");
+
+                    b.ToTable("resource_references", (string)null);
+                });
+
             modelBuilder.Entity("LeadFlow.Domain.Entities.SystemSettings", b =>
                 {
                     b.Property<Guid>("Id")
@@ -771,6 +1199,36 @@ namespace LeadFlow.Infrastructure.Migrations
                     b.ToTable("user_smtp_settings", (string)null);
                 });
 
+            modelBuilder.Entity("LeadFlow.Domain.Entities.AssignmentInterview", b =>
+                {
+                    b.HasOne("LeadFlow.Domain.Entities.ResourceAssignment", "Assignment")
+                        .WithMany("Interviews")
+                        .HasForeignKey("AssignmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Assignment");
+                });
+
+            modelBuilder.Entity("LeadFlow.Domain.Entities.AssignmentStageHistory", b =>
+                {
+                    b.HasOne("LeadFlow.Domain.Entities.ResourceAssignment", "Assignment")
+                        .WithMany("StageHistories")
+                        .HasForeignKey("AssignmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("LeadFlow.Domain.Entities.User", "ChangedByUser")
+                        .WithMany()
+                        .HasForeignKey("ChangedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Assignment");
+
+                    b.Navigation("ChangedByUser");
+                });
+
             modelBuilder.Entity("LeadFlow.Domain.Entities.EmailAttempt", b =>
                 {
                     b.HasOne("LeadFlow.Domain.Entities.EmailTask", "EmailTask")
@@ -911,6 +1369,106 @@ namespace LeadFlow.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("LeadFlow.Domain.Entities.ResourceApplicationDetail", b =>
+                {
+                    b.HasOne("LeadFlow.Domain.Entities.Resource", "Resource")
+                        .WithOne("ApplicationDetail")
+                        .HasForeignKey("LeadFlow.Domain.Entities.ResourceApplicationDetail", "ResourceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_resource_application_details_resources_id");
+
+                    b.Navigation("Resource");
+                });
+
+            modelBuilder.Entity("LeadFlow.Domain.Entities.ResourceAssignment", b =>
+                {
+                    b.HasOne("LeadFlow.Domain.Entities.User", "AssignedByUser")
+                        .WithMany()
+                        .HasForeignKey("AssignedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("LeadFlow.Domain.Entities.OpportunityPosition", "Position")
+                        .WithMany()
+                        .HasForeignKey("PositionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("LeadFlow.Domain.Entities.Resource", "Resource")
+                        .WithMany()
+                        .HasForeignKey("ResourceId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("AssignedByUser");
+
+                    b.Navigation("Position");
+
+                    b.Navigation("Resource");
+                });
+
+            modelBuilder.Entity("LeadFlow.Domain.Entities.ResourceDocument", b =>
+                {
+                    b.HasOne("LeadFlow.Domain.Entities.Resource", "Resource")
+                        .WithMany("Documents")
+                        .HasForeignKey("ResourceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_resource_documents_resources_id");
+
+                    b.HasOne("LeadFlow.Domain.Entities.User", "UploadedByUser")
+                        .WithMany()
+                        .HasForeignKey("UploadedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_resource_documents_users_id");
+
+                    b.Navigation("Resource");
+
+                    b.Navigation("UploadedByUser");
+                });
+
+            modelBuilder.Entity("LeadFlow.Domain.Entities.ResourceEmployment", b =>
+                {
+                    b.HasOne("LeadFlow.Domain.Entities.Resource", "Resource")
+                        .WithMany("Employments")
+                        .HasForeignKey("ResourceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_resource_employments_resources_id");
+
+                    b.Navigation("Resource");
+                });
+
+            modelBuilder.Entity("LeadFlow.Domain.Entities.ResourceReference", b =>
+                {
+                    b.HasOne("LeadFlow.Domain.Entities.Lead", "ReferredByLead")
+                        .WithMany()
+                        .HasForeignKey("ReferredByLeadId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_resource_references_leads_id");
+
+                    b.HasOne("LeadFlow.Domain.Entities.User", "ReferredByUser")
+                        .WithMany()
+                        .HasForeignKey("ReferredByUserId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_resource_references_users_id");
+
+                    b.HasOne("LeadFlow.Domain.Entities.Resource", "Resource")
+                        .WithMany("References")
+                        .HasForeignKey("ResourceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_resource_references_resources_id");
+
+                    b.Navigation("ReferredByLead");
+
+                    b.Navigation("ReferredByUser");
+
+                    b.Navigation("Resource");
+                });
+
             modelBuilder.Entity("LeadFlow.Domain.Entities.UserSmtpSettings", b =>
                 {
                     b.HasOne("LeadFlow.Domain.Entities.User", "User")
@@ -939,6 +1497,24 @@ namespace LeadFlow.Infrastructure.Migrations
                     b.Navigation("Documents");
 
                     b.Navigation("Positions");
+                });
+
+            modelBuilder.Entity("LeadFlow.Domain.Entities.Resource", b =>
+                {
+                    b.Navigation("ApplicationDetail");
+
+                    b.Navigation("Documents");
+
+                    b.Navigation("Employments");
+
+                    b.Navigation("References");
+                });
+
+            modelBuilder.Entity("LeadFlow.Domain.Entities.ResourceAssignment", b =>
+                {
+                    b.Navigation("Interviews");
+
+                    b.Navigation("StageHistories");
                 });
 
             modelBuilder.Entity("LeadFlow.Domain.Entities.User", b =>
