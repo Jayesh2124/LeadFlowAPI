@@ -13,7 +13,8 @@ public record ScheduleEmailCommand(
     Guid LeadId,
     Guid TemplateId,
     DateTime? ScheduledAt,
-    bool ApplySystemFollowups = true,
+    bool ApplyFollowups = false,
+    bool TrackOpens = false,
     string? OverrideSubject = null,
     string? OverrideBody = null
 ) : IRequest<Result<Guid>>;
@@ -80,10 +81,11 @@ public class ScheduleEmailHandler(
         var task = EmailTask.Create(
             currentUser.UserId, lead.Id, template.Id,
             subject, body, scheduledTime,
-            maxAttempts: settings.DefaultMaxRetries);
+            maxAttempts: settings.DefaultMaxRetries,
+            trackOpens: cmd.TrackOpens);
 
         // 8. Attach followup rules
-        if (cmd.ApplySystemFollowups && settings.AutoFollowup)
+        if (cmd.ApplyFollowups && settings.AutoFollowup)
         {
             foreach (var rule in settings.FollowupRules.Where(r => r.Enabled).OrderBy(r => r.Order))
             {

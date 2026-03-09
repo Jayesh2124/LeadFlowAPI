@@ -1,17 +1,20 @@
+using System;
 using LeadFlow.Domain.Enums;
 
 namespace LeadFlow.Application.Features.Opportunities.DTOs;
 
-public record CreateOpportunityRequest(
-    Guid LeadId,
-    string Title,
-    string? Description,
-    OpportunityType Type,
-    OpportunityPriority Priority,
-    decimal ExpectedValue,
-    DateTime? ExpectedStartDate,
-    DateTime? ExpectedEndDate,
-    Guid? OwnerUserId,
-    string? WorkMode = null,
-    string? Duration = null,
-    bool? NdaSigned = null);
+public class CreateOpportunityRequest
+{
+    public Guid LeadId { get; set; }
+    public string Title { get; set; } = string.Empty;
+    public string? Description { get; set; }
+    public OpportunityType Type { get; set; }
+    public OpportunityPriority Priority { get; set; }
+    public decimal ExpectedValue { get; set; }
+    public DateTime? ExpectedStartDate { get; set; }
+    public DateTime? ExpectedEndDate { get; set; }
+    public Guid? OwnerUserId { get; set; }
+    public string? WorkMode { get; set; }
+    public string? Duration { get; set; }
+    public bool? NdaSigned { get; set; }
+}

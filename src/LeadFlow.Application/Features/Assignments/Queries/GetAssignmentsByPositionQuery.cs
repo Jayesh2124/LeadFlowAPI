@@ -1,3 +1,4 @@
+using System;
 using LeadFlow.Application.Common.Interfaces;
 using LeadFlow.Domain.Enums;
 using MediatR;
@@ -18,7 +19,11 @@ public record AssignmentResponse(
     bool IsSelectedElsewhere
 );
 
-public record GetAssignmentsByPositionQuery(Guid PositionId) : IRequest<List<AssignmentResponse>>;
+public class GetAssignmentsByPositionQuery : IRequest<List<AssignmentResponse>>
+{
+    public Guid PositionId { get; }
+    public GetAssignmentsByPositionQuery(Guid positionId) => PositionId = positionId;
+}
 
 public class GetAssignmentsByPositionQueryHandler : IRequestHandler<GetAssignmentsByPositionQuery, List<AssignmentResponse>>
 {

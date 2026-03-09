@@ -17,6 +17,27 @@ public static class EmailTaskEndpoints
 {
     public static IEndpointRouteBuilder MapEmailTaskEndpoints(this IEndpointRouteBuilder app)
     {
+        app.MapGet("/api/tracking/email/{id:guid}/open", async (Guid id, LeadFlow.Application.Common.Interfaces.IApplicationDbContext db, CancellationToken ct) =>
+        {
+            var task = await db.EmailTasks.FindAsync(new object[] { id }, ct);
+            if (task is not null && task.OpenedAt is null)
+            {
+                task.MarkOpened();
+                await db.SaveChangesAsync(ct);
+            }
+
+            // Return a 1x1 transparent GIF pixel
+            byte[] pixel = new byte[] {
+                0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 0x01, 0x00,
+                0x01, 0x00, 0x80, 0x00, 0x00, 0xFF, 0xFF, 0xFF,
+                0x00, 0x00, 0x00, 0x2C, 0x00, 0x00, 0x00, 0x00,
+                0x01, 0x00, 0x01, 0x00, 0x00, 0x02, 0x02, 0x44,
+                0x01, 0x00, 0x3B
+            };
+
+            return Results.File(pixel, "image/gif");
+        }).ExcludeFromDescription().AllowAnonymous();
+
         var group = app.MapGroup("/api/email-tasks")
             .WithTags("EmailTasks")
             .RequireAuthorization();

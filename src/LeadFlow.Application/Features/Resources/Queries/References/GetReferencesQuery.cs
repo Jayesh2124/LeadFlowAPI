@@ -1,3 +1,4 @@
+using System;
 using LeadFlow.Application.Common.Interfaces;
 using LeadFlow.Application.Features.Resources.DTOs;
 using MediatR;
@@ -5,7 +6,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LeadFlow.Application.Features.Resources.Queries.References;
 
-public record GetReferencesQuery(Guid ResourceId) : IRequest<List<ReferenceResponse>>;
+public class GetReferencesQuery : IRequest<List<ReferenceResponse>>
+{
+    public Guid ResourceId { get; }
+    public GetReferencesQuery(Guid resourceId) => ResourceId = resourceId;
+}
 
 public class GetReferencesQueryHandler : IRequestHandler<GetReferencesQuery, List<ReferenceResponse>>
 {

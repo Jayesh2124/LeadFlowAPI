@@ -1,3 +1,4 @@
+using System;
 using LeadFlow.Application.Common.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +17,11 @@ public record InterviewResponse(
     string? Feedback
 );
 
-public record GetAssignmentInterviewsQuery(Guid AssignmentId) : IRequest<List<InterviewResponse>>;
+public class GetAssignmentInterviewsQuery : IRequest<List<InterviewResponse>>
+{
+    public Guid AssignmentId { get; }
+    public GetAssignmentInterviewsQuery(Guid assignmentId) => AssignmentId = assignmentId;
+}
 
 public class GetAssignmentInterviewsQueryHandler : IRequestHandler<GetAssignmentInterviewsQuery, List<InterviewResponse>>
 {

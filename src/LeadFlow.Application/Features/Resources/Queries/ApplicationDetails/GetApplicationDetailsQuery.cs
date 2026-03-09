@@ -1,3 +1,4 @@
+using System;
 using LeadFlow.Application.Common.Interfaces;
 using LeadFlow.Application.Features.Resources.DTOs;
 using MediatR;
@@ -5,8 +6,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LeadFlow.Application.Features.Resources.Queries.ApplicationDetails;
 
-public record GetApplicationDetailsQuery(Guid ResourceId)
-    : IRequest<ApplicationDetailsResponse?>;
+public class GetApplicationDetailsQuery : IRequest<ApplicationDetailsResponse?>
+{
+    public Guid ResourceId { get; }
+    public GetApplicationDetailsQuery(Guid resourceId) => ResourceId = resourceId;
+}
 
 public class GetApplicationDetailsQueryHandler
     : IRequestHandler<GetApplicationDetailsQuery, ApplicationDetailsResponse?>

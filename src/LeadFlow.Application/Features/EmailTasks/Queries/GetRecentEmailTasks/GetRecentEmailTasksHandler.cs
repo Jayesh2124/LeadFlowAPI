@@ -1,3 +1,4 @@
+using System;
 using LeadFlow.Application.Common.Interfaces;
 using LeadFlow.Application.Common.Models;
 using MediatR;
@@ -5,19 +6,46 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LeadFlow.Application.Features.EmailTasks.Queries.GetRecentEmailTasks;
 
-public record GetRecentEmailTasksQuery(int Count = 10) : IRequest<Result<List<EmailTaskDto>>>;
+public class GetRecentEmailTasksQuery : IRequest<Result<List<EmailTaskDto>>>
+{
+    public int Count { get; }
+    public GetRecentEmailTasksQuery(int count = 10) => Count = count;
+}
 
-public record EmailTaskDto(
-    Guid Id,
-    Guid LeadId,
-    string LeadName,
-    string TemplateName,
-    string Status,
-    DateTime? ScheduledAt,
-    DateTime? SentAt,
-    int RetryCount,
-    string? ErrorMessage
-);
+public class EmailTaskDto
+{
+    public Guid Id { get; }
+    public Guid LeadId { get; }
+    public string LeadName { get; }
+    public string TemplateName { get; }
+    public string Status { get; }
+    public DateTime? ScheduledAt { get; }
+    public DateTime? SentAt { get; }
+    public int RetryCount { get; }
+    public string? ErrorMessage { get; }
+
+    public EmailTaskDto(
+        Guid Id,
+        Guid LeadId,
+        string LeadName,
+        string TemplateName,
+        string Status,
+        DateTime? ScheduledAt,
+        DateTime? SentAt,
+        int RetryCount,
+        string? ErrorMessage)
+    {
+        this.Id = Id;
+        this.LeadId = LeadId;
+        this.LeadName = LeadName;
+        this.TemplateName = TemplateName;
+        this.Status = Status;
+        this.ScheduledAt = ScheduledAt;
+        this.SentAt = SentAt;
+        this.RetryCount = RetryCount;
+        this.ErrorMessage = ErrorMessage;
+    }
+}
 
 public class GetRecentEmailTasksHandler(IApplicationDbContext db)
     : IRequestHandler<GetRecentEmailTasksQuery, Result<List<EmailTaskDto>>>

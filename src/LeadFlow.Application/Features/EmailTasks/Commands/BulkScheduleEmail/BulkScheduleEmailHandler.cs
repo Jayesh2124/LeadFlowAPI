@@ -9,7 +9,8 @@ public record BulkScheduleEmailCommand(
     Guid TemplateId,
     DateTime? ScheduledAt,
     bool StaggerMinutes = true,
-    bool ApplyFollowups = true,
+    bool ApplyFollowups = false,
+    bool TrackOpens = false,
     string? OverrideSubject = null,
     string? OverrideBody = null
 ) : IRequest<BulkScheduleResult>;
@@ -35,7 +36,7 @@ public class BulkScheduleEmailHandler(IMediator mediator)
 
             var result = await mediator.Send(
                 new ScheduleEmail.ScheduleEmailCommand(
-                    cmd.LeadIds[i], cmd.TemplateId, sendAt, cmd.ApplyFollowups, cmd.OverrideSubject, cmd.OverrideBody),
+                    cmd.LeadIds[i], cmd.TemplateId, sendAt, cmd.ApplyFollowups, cmd.TrackOpens, cmd.OverrideSubject, cmd.OverrideBody),
                 ct);
 
             if (result.IsSuccess) scheduled++;

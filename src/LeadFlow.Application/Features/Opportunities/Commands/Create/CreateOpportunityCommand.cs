@@ -8,7 +8,11 @@ using MediatR;
 
 namespace LeadFlow.Application.Features.Opportunities.Commands.Create;
 
-public record CreateOpportunityCommand(CreateOpportunityRequest Request) : IRequest<Guid>;
+public class CreateOpportunityCommand : IRequest<Guid>
+{
+    public CreateOpportunityRequest Request { get; }
+    public CreateOpportunityCommand(CreateOpportunityRequest request) => Request = request;
+}
 
 public class CreateOpportunityValidator : AbstractValidator<CreateOpportunityCommand>
 {

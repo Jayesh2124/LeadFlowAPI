@@ -1,8 +1,21 @@
+using System;
 using MediatR;
 
 namespace LeadFlow.Application.Features.EmailTasks.Queries.GetLeadReport;
 
-public record GetLeadReportQuery(string DateFilter, DateTime? StartDate, DateTime? EndDate) : IRequest<List<LeadReportDto>>;
+public class GetLeadReportQuery : IRequest<List<LeadReportDto>>
+{
+    public string DateFilter { get; }
+    public DateTime? StartDate { get; }
+    public DateTime? EndDate { get; }
+
+    public GetLeadReportQuery(string dateFilter, DateTime? startDate, DateTime? endDate)
+    {
+        DateFilter = dateFilter;
+        StartDate = startDate;
+        EndDate = endDate;
+    }
+}
 
 public class LeadReportDto
 {

@@ -1,3 +1,4 @@
+using System;
 using LeadFlow.Application.Common.Interfaces;
 using LeadFlow.Application.Common.Interfaces.Repositories;
 using LeadFlow.Application.Features.Opportunities.DTOs;
@@ -5,7 +6,11 @@ using MediatR;
 
 namespace LeadFlow.Application.Features.Opportunities.Queries.GetByLead;
 
-public record GetOpportunitiesByLeadQuery(Guid LeadId) : IRequest<List<OpportunitySummaryDto>>;
+public class GetOpportunitiesByLeadQuery : IRequest<List<OpportunitySummaryDto>>
+{
+    public Guid LeadId { get; }
+    public GetOpportunitiesByLeadQuery(Guid leadId) => LeadId = leadId;
+}
 
 public class GetOpportunitiesByLeadQueryHandler : IRequestHandler<GetOpportunitiesByLeadQuery, List<OpportunitySummaryDto>>
 {

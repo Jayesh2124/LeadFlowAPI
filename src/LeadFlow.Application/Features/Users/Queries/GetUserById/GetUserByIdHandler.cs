@@ -1,10 +1,15 @@
+using System;
 using LeadFlow.Application.Common.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace LeadFlow.Application.Features.Users.Queries.GetUserById;
 
-public record GetUserByIdQuery(Guid Id) : IRequest<UserDetailDto?>;
+public class GetUserByIdQuery : IRequest<UserDetailDto?>
+{
+    public Guid Id { get; }
+    public GetUserByIdQuery(Guid id) => Id = id;
+}
 
 public record UserDetailDto(
     Guid     Id,

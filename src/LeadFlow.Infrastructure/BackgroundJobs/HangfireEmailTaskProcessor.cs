@@ -53,10 +53,17 @@ public class HangfireEmailTaskProcessor(
 
             var sender = await senderFactory.GetSenderForUserAsync(task.UserId, ct);
 
+            var bodyToSend = task.RenderedBody;
+            if (task.TrackOpens)
+            {
+                var trackingPixelHtml = $"<img src=\"http://localhost:5045/api/tracking/email/{task.Id}/open\" width=\"1\" height=\"1\" style=\"display:none;\" />";
+                bodyToSend += trackingPixelHtml;
+            }
+
             var message = new Application.Common.Interfaces.EmailMessage(
                 task.Lead.Email, task.Lead.FullName,
                 smtp.FromEmail, smtp.FromName,
-                task.RenderedSubject, task.RenderedBody,
+                task.RenderedSubject, bodyToSend,
                 task.Template?.Attachments ?? []);
 
             var result = await sender.SendAsync(message, ct);

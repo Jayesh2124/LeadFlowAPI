@@ -1,3 +1,4 @@
+using System;
 using LeadFlow.Application.Common.Interfaces;
 using LeadFlow.Application.Features.Resources.DTOs;
 using MediatR;
@@ -5,7 +6,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LeadFlow.Application.Features.Resources.Queries.Employment;
 
-public record GetEmploymentsQuery(Guid ResourceId) : IRequest<List<EmploymentResponse>>;
+public class GetEmploymentsQuery : IRequest<List<EmploymentResponse>>
+{
+    public Guid ResourceId { get; }
+    public GetEmploymentsQuery(Guid resourceId) => ResourceId = resourceId;
+}
 
 public class GetEmploymentsQueryHandler : IRequestHandler<GetEmploymentsQuery, List<EmploymentResponse>>
 {

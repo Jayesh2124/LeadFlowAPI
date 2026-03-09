@@ -1,3 +1,4 @@
+using System;
 using FluentValidation;
 using LeadFlow.Application.Common.Interfaces;
 using LeadFlow.Application.Common.Interfaces.Repositories;
@@ -6,7 +7,11 @@ using MediatR;
 
 namespace LeadFlow.Application.Features.Opportunities.Queries.GetList;
 
-public record GetOpportunitiesQuery(OpportunityFilterRequest Filter) : IRequest<OpportunityListResponse>;
+public class GetOpportunitiesQuery : IRequest<OpportunityListResponse>
+{
+    public OpportunityFilterRequest Filter { get; }
+    public GetOpportunitiesQuery(OpportunityFilterRequest filter) => Filter = filter;
+}
 
 public class GetOpportunitiesQueryValidator : AbstractValidator<GetOpportunitiesQuery>
 {
@@ -45,8 +50,8 @@ public class GetOpportunitiesQueryHandler : IRequestHandler<GetOpportunitiesQuer
             f.SearchTitle,
             currentUserId,
             isAdmin,
-            f.PageNumber,
-            f.PageSize,
+            f.PageNumber.GetValueOrDefault(1),
+            f.PageSize.GetValueOrDefault(10),
             cancellationToken);
 
         var count = await _opportunityRepository.GetCountAsync(
@@ -76,7 +81,7 @@ public class GetOpportunitiesQueryHandler : IRequestHandler<GetOpportunitiesQuer
         return new OpportunityListResponse(
             Items: dtoList,
             TotalCount: count,
-            PageNumber: f.PageNumber,
-            PageSize: f.PageSize);
+            PageNumber: f.PageNumber.GetValueOrDefault(1),
+            PageSize: f.PageSize.GetValueOrDefault(10));
     }
 }

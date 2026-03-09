@@ -7,7 +7,16 @@ using MediatR;
 
 namespace LeadFlow.Application.Features.Opportunities.Commands.ChangeStatus;
 
-public record ChangeOpportunityStatusCommand(Guid Id, ChangeOpportunityStatusRequest Request) : IRequest;
+public class ChangeOpportunityStatusCommand : IRequest
+{
+    public Guid Id { get; }
+    public ChangeOpportunityStatusRequest Request { get; }
+    public ChangeOpportunityStatusCommand(Guid id, ChangeOpportunityStatusRequest request)
+    {
+        Id = id;
+        Request = request;
+    }
+}
 
 public class ChangeOpportunityStatusValidator : AbstractValidator<ChangeOpportunityStatusCommand>
 {

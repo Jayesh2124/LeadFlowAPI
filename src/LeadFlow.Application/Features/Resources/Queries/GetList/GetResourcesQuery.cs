@@ -1,3 +1,4 @@
+using System;
 using LeadFlow.Application.Common.Interfaces;
 using LeadFlow.Application.Features.Resources.DTOs;
 using LeadFlow.Domain.Enums;
@@ -6,7 +7,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LeadFlow.Application.Features.Resources.Queries.GetList;
 
-public record GetResourcesQuery(ResourceFilterRequest Filter) : IRequest<PagedResourcesResult>;
+public class GetResourcesQuery : IRequest<PagedResourcesResult>
+{
+    public ResourceFilterRequest Filter { get; }
+    public GetResourcesQuery(ResourceFilterRequest filter) => Filter = filter;
+}
 
 public class GetResourcesQueryHandler : IRequestHandler<GetResourcesQuery, PagedResourcesResult>
 {

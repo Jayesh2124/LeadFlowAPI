@@ -1,3 +1,4 @@
+using System;
 using LeadFlow.Application.Common.Interfaces;
 using LeadFlow.Application.Features.Positions.DTOs;
 using MediatR;
@@ -5,7 +6,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LeadFlow.Application.Features.Positions.Queries.GetByOpportunity;
 
-public record GetPositionsByOpportunityQuery(Guid OpportunityId) : IRequest<List<PositionResponse>>;
+public class GetPositionsByOpportunityQuery : IRequest<List<PositionResponse>>
+{
+    public Guid OpportunityId { get; }
+    public GetPositionsByOpportunityQuery(Guid opportunityId) => OpportunityId = opportunityId;
+}
 
 public class GetPositionsByOpportunityQueryHandler
     : IRequestHandler<GetPositionsByOpportunityQuery, List<PositionResponse>>

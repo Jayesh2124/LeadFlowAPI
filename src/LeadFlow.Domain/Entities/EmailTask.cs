@@ -26,6 +26,8 @@ public class EmailTask : BaseEntity
 
     public string? HangfireJobId { get; private set; }
     public string? IdempotencyKey { get; private set; }
+    public bool TrackOpens { get; private set; }
+    public DateTime? OpenedAt { get; private set; }
 
     // Navigation
     public User User { get; private set; } = null!;
@@ -40,7 +42,7 @@ public class EmailTask : BaseEntity
         Guid userId, Guid leadId, Guid templateId,
         string renderedSubject, string renderedBody,
         DateTime scheduledAt, int maxAttempts = 3,
-        Guid? parentTaskId = null)
+        Guid? parentTaskId = null, bool trackOpens = false)
     {
         var task = new EmailTask
         {
@@ -48,6 +50,7 @@ public class EmailTask : BaseEntity
             RenderedSubject = renderedSubject, RenderedBody = renderedBody,
             ScheduledAt = scheduledAt, MaxAttempts = maxAttempts,
             ParentTaskId = parentTaskId,
+            TrackOpens = trackOpens,
             IdempotencyKey = $"{userId}:{leadId}:{templateId}:{scheduledAt:yyyyMMddHHmm}"
         };
         task.AddDomainEvent(new EmailTaskScheduledEvent(task.Id));
@@ -110,6 +113,15 @@ public class EmailTask : BaseEntity
     }
 
     public void SetHangfireJobId(string jobId) { HangfireJobId = jobId; Touch(); }
+
+    public void MarkOpened()
+    {
+        if (OpenedAt is null)
+        {
+            OpenedAt = DateTime.UtcNow;
+            Touch();
+        }
+    }
 
     private void GuardStatus(params EmailTaskStatus[] allowed)
     {

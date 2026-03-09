@@ -39,10 +39,11 @@ public static class ReportsEndpoints
     }
 }
 
-public record GetLeadPipelineReportRequest(
-    [FromQuery] Guid? LeadId,
-    [FromQuery] Guid? OpportunityId,
-    [FromQuery] string? Stage,
-    [FromQuery] DateTime? DateFrom,
-    [FromQuery] DateTime? DateTo
-);
+public class GetLeadPipelineReportRequest
+{
+    [FromQuery] public Guid? LeadId { get; set; }
+    [FromQuery] public Guid? OpportunityId { get; set; }
+    [FromQuery] public string? Stage { get; set; }
+    [FromQuery] public DateTime? DateFrom { get; set; }
+    [FromQuery] public DateTime? DateTo { get; set; }
+}
